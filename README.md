@@ -1,6 +1,6 @@
 # what is ldfs?
 
-ldfs short for **light distributed file system** is a project aims to replicate a [distributed file system assignment](https://www.andrew.cmu.edu/course/14-736-s20/applications/labs/proj3/proj3.pdf) for "fun".
+ldfs short for **light distributed file system** is a project that aims to replicate a [distributed file system assignment](https://www.andrew.cmu.edu/course/14-736-s20/applications/labs/proj3/proj3.pdf) for "fun".
 
 this project will rougly follow the requiremnts in the linked assignment there might be lot of variants.
 
