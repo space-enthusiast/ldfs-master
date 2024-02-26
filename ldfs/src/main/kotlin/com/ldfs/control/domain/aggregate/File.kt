@@ -12,7 +12,7 @@ data class File(
     var name: String,
     var directory: AggregateAssociation<Directory, UUID>,
 ) : Aggregate<UUID>(
-    id = id,
-    created = created,
-    updated = updated,
-)
+        id = id,
+        created = created,
+        updated = updated,
+    )

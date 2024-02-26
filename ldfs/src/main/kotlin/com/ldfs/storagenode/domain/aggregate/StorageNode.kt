@@ -1,4 +1,4 @@
-package com.ldfs.control.domain.aggregate
+package com.ldfs.storagenode.domain.aggregate
 
 import com.ldfs.common.domain.Aggregate
 import java.net.InetSocketAddress
@@ -12,7 +12,7 @@ class StorageNode(
     val ip: InetSocketAddress,
     val alive: Boolean,
 ) : Aggregate<UUID>(
-    id = id,
-    created = created,
-    updated = updated,
-)
+        id = id,
+        created = created,
+        updated = updated,
+    )
