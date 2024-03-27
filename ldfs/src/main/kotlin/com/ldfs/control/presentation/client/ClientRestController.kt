@@ -1,13 +1,15 @@
 package com.ldfs.control.presentation.client
 
-import com.ldfs.control.domain.aggregate.Directory
-import com.ldfs.control.domain.aggregate.File
+import com.ldfs.control.application.directory.DirectoryCreateService
+import com.ldfs.control.domain.model.aggregate.Directory
+import com.ldfs.control.domain.model.aggregate.File
 import com.ldfs.control.presentation.client.request.DirectoryCreationRequest
 import com.ldfs.control.presentation.client.request.DirectoryUpdateRequest
 import com.ldfs.control.presentation.client.request.FileCreateOperationCreateRequest
 import com.ldfs.control.presentation.client.request.FileUpdateOperationCreateRequest
 import com.ldfs.control.presentation.client.request.FileUpdateRequest
 import com.ldfs.control.presentation.client.response.FileCreateOperation
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -20,12 +22,20 @@ import java.util.UUID
 
 @RequestMapping("client")
 @RestController
-class ClientRestController {
+class ClientRestController(
+    private val directoryCreateService: DirectoryCreateService,
+) {
     @PostMapping("directory")
     fun createDirectory(
         @RequestBody request: DirectoryCreationRequest,
     ): ResponseEntity<Directory> {
-        TODO()
+        return ResponseEntity(
+            directoryCreateService.create(
+                name = request.name,
+                parentDirectoryId = request.parentUuid,
+            ),
+            HttpStatus.CREATED,
+        )
     }
 
     @PatchMapping("directory/{directoryUuid}")

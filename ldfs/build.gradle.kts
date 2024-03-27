@@ -8,6 +8,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.jpa") version "1.9.23"
 }
 
 group = "com"

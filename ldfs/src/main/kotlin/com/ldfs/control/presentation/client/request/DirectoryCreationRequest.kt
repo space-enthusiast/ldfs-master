@@ -4,5 +4,5 @@ import java.util.UUID
 
 class DirectoryCreationRequest(
     val name: String,
-    val parentUuid: UUID,
+    val parentUuid: UUID? = null,
 )
