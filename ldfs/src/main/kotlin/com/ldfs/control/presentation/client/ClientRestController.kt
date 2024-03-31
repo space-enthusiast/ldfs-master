@@ -1,6 +1,7 @@
 package com.ldfs.control.presentation.client
 
 import com.ldfs.control.application.directory.DirectoryCreateService
+import com.ldfs.control.application.directory.DirectoryUpdateService
 import com.ldfs.control.domain.model.aggregate.Directory
 import com.ldfs.control.domain.model.aggregate.File
 import com.ldfs.control.presentation.client.request.DirectoryCreationRequest
@@ -24,6 +25,7 @@ import java.util.UUID
 @RestController
 class ClientRestController(
     private val directoryCreateService: DirectoryCreateService,
+    private val directoryUpdateService: DirectoryUpdateService,
 ) {
     @PostMapping("directory")
     fun createDirectory(
@@ -43,7 +45,13 @@ class ClientRestController(
         @PathVariable("directoryUuid") directoryUuid: UUID,
         @RequestBody request: DirectoryUpdateRequest,
     ): ResponseEntity<Directory> {
-        TODO()
+        return ResponseEntity.ok(
+            directoryUpdateService.update(
+                directoryId = directoryUuid,
+                name = request.name,
+                parentDirectoryId = request.parentDirectoryUuid,
+            )
+        )
     }
 
     @DeleteMapping("directory/{directoryUuid}")

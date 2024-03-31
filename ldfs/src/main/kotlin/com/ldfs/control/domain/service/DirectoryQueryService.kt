@@ -16,4 +16,21 @@ class DirectoryQueryService(
         return repository.findByIdOrNull(id)?.toAggregate()
             ?: throw AggregateNotFoundException("directory not found id: $id")
     }
+
+    fun queryLock(id: UUID): Directory {
+        return repository.findAndPessimisticReadLockByIdOrNull(id)?.toAggregate()
+            ?: throw AggregateNotFoundException(Directory::class.simpleName)
+    }
+
+    fun queryLock(ids: List<UUID>): List<Directory> {
+        return repository.findAndPessimisticReadLockByIdsOrNull(ids).map {
+            it.toAggregate()
+        }.sortedBy { ids.indexOf(it.id) }.also { directories ->
+            val inputIds = ids.toSet()
+            val queriesIds = directories.map { it.id }.toSet()
+            if (inputIds != queriesIds) {
+                throw AggregateNotFoundException("${Directory::class.simpleName} ids: ${inputIds - queriesIds}")
+            }
+        }
+    }
 }

@@ -1,3 +1,3 @@
 package com.ldfs.common.domain
 
-class AggregateNotFoundException(className: String? = null) : RuntimeException(className)
+class AggregateNotFoundException(message: String? = null) : RuntimeException(message)

@@ -4,5 +4,5 @@ import java.util.UUID
 
 class DirectoryUpdateRequest(
     val name: String? = null,
-    val parentUuid: UUID? = null,
+    val parentDirectoryUuid: UUID? = null,
 )

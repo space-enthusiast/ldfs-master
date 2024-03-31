@@ -8,7 +8,7 @@ import jakarta.persistence.Id
 import java.time.OffsetDateTime
 import java.util.UUID
 
-@Entity
+@Entity(name = "directory")
 class DirectoryEntity(
     @Id
     var id: UUID,

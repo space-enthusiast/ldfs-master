@@ -29,4 +29,14 @@ class DirectoryCommandService(
             ).toEntity(),
         ).toAggregate()
     }
+
+    @Transactional
+    fun save(directory: Directory): Directory {
+        return repository.save(directory.toEntity()).toAggregate()
+    }
+
+    @Transactional
+    fun saveAll(directories: List<Directory>): List<Directory> {
+        return repository.saveAll(directories.map { it.toEntity() }).map { it.toAggregate() }
+    }
 }
