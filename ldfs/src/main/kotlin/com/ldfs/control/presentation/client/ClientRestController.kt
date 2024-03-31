@@ -52,7 +52,7 @@ class ClientRestController(
                 directoryId = directoryUuid,
                 name = request.name,
                 parentDirectoryId = request.parentDirectoryUuid,
-            )
+            ),
         )
     }
 

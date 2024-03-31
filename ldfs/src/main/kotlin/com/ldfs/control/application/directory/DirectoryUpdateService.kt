@@ -6,8 +6,8 @@ import com.ldfs.control.domain.model.aggregate.Directory
 import com.ldfs.control.domain.service.DirectoryCommandService
 import com.ldfs.control.domain.service.DirectoryQueryService
 import org.springframework.stereotype.Service
-import java.util.UUID
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 class DirectoryUpdateService(
@@ -24,13 +24,15 @@ class DirectoryUpdateService(
             name = name,
             parentDirectoryId = parentDirectoryId,
         )
-        val (lockedDirectory, lockedParentDirectory) = queryAndLockDirectoryAndParentDirectory(
-            directoryId = directoryId,
-            parentDirectoryId = parentDirectoryId,
-        )
-        val lockedOriginalParentDirectory = lockedDirectory.parent?.let {
-            queryService.queryLock(it.id)
-        }
+        val (lockedDirectory, lockedParentDirectory) =
+            queryAndLockDirectoryAndParentDirectory(
+                directoryId = directoryId,
+                parentDirectoryId = parentDirectoryId,
+            )
+        val lockedOriginalParentDirectory =
+            lockedDirectory.parent?.let {
+                queryService.queryLock(it.id)
+            }
 
         lockedParentDirectory?.let {
             lockedDirectory.parent = AggregateAssociation(it.id)
@@ -49,24 +51,24 @@ class DirectoryUpdateService(
         }
 
         return commandService.saveAll(
-            listOfNotNull(lockedDirectory, lockedParentDirectory, lockedOriginalParentDirectory)
+            listOfNotNull(lockedDirectory, lockedParentDirectory, lockedOriginalParentDirectory),
         ).firstOrNull() ?: throw AggregateNotFoundException("${Directory::class.simpleName} id: $directoryId")
     }
 
     private fun queryAndLockDirectoryAndParentDirectory(
         directoryId: UUID,
-        parentDirectoryId: UUID?
+        parentDirectoryId: UUID?,
     ): Pair<Directory, Directory?> {
         return if (parentDirectoryId == null) {
             Pair(
                 queryService.queryLock(directoryId),
-                null
+                null,
             )
         } else {
             val lockedDirectories = queryService.queryLock(listOf(directoryId, parentDirectoryId))
             Pair(
                 lockedDirectories[0],
-                lockedDirectories[1]
+                lockedDirectories[1],
             )
         }
     }
