@@ -39,4 +39,9 @@ class DirectoryCommandService(
     fun saveAll(directories: List<Directory>): List<Directory> {
         return repository.saveAll(directories.map { it.toEntity() }).map { it.toAggregate() }
     }
+
+    @Transactional
+    fun delete(id: UUID) {
+        repository.deleteById(id)
+    }
 }
