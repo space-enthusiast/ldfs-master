@@ -46,11 +46,11 @@ class DirectoryUpdateService(
     ): Pair<Directory, Directory?> {
         return if (parentDirectoryId == null) {
             Pair(
-                queryService.queryLock(directoryId),
+                queryService.queryReadLock(directoryId),
                 null,
             )
         } else {
-            val lockedDirectories = queryService.queryLock(listOf(directoryId, parentDirectoryId))
+            val lockedDirectories = queryService.queryReadLock(listOf(directoryId, parentDirectoryId))
             Pair(
                 lockedDirectories[0],
                 lockedDirectories[1],

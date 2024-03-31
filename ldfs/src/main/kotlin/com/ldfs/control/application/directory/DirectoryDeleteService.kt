@@ -13,13 +13,22 @@ class DirectoryDeleteService(
 ) {
     @Transactional
     fun delete(directoryId: UUID) {
-        validateDeletePossible(
-            directoryId = directoryId,
-        )
-        commandService.delete(directoryId)
+        recursivelyDeleteDirectory(setOf(directoryId))
     }
 
-    private fun validateDeletePossible(directoryId: UUID) {
-        queryService.query(id = directoryId)
+    private tailrec fun recursivelyDeleteDirectory(directoryIds: Set<UUID>) {
+        if (directoryIds.isEmpty()) {
+            return
+        }
+
+        val lockedDirectories = queryService.queryWriteLock(directoryIds.toList())
+        val childDirectories =
+            queryService.query(
+                parentDirectoryIds = lockedDirectories.mapNotNull { it.parent?.id }.toSet(),
+            )
+
+        commandService.delete(lockedDirectories.map { it.id }.toSet())
+
+        recursivelyDeleteDirectory(childDirectories.map { it.id }.toSet())
     }
 }

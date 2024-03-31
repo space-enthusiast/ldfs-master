@@ -43,4 +43,9 @@ class DirectoryCommandService(
     fun delete(id: UUID) {
         repository.deleteById(id)
     }
+
+    @Transactional
+    fun delete(ids: Set<UUID>) {
+        repository.deleteAllByIdInBatch(ids)
+    }
 }
