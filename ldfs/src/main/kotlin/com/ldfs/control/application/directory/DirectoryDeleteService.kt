@@ -16,18 +16,6 @@ class DirectoryDeleteService(
         validateDeletePossible(
             directoryId = directoryId,
         )
-        val lockedDirectory = queryService.queryLock(directoryId)
-        val lockedOriginalParentDirectory =
-            lockedDirectory.parent?.let {
-                queryService.queryLock(it.id)
-            }
-
-        lockedOriginalParentDirectory?.let {
-            it.children = it.children.filter { child -> child.id != directoryId }
-        }
-        lockedOriginalParentDirectory?.let {
-            commandService.save(it)
-        }
         commandService.delete(directoryId)
     }
 

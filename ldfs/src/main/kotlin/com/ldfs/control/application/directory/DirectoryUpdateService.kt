@@ -1,7 +1,6 @@
 package com.ldfs.control.application.directory
 
 import com.ldfs.common.domain.AggregateAssociation
-import com.ldfs.common.domain.AggregateNotFoundException
 import com.ldfs.control.domain.model.aggregate.Directory
 import com.ldfs.control.domain.service.DirectoryCommandService
 import com.ldfs.control.domain.service.DirectoryQueryService
@@ -29,10 +28,6 @@ class DirectoryUpdateService(
                 directoryId = directoryId,
                 parentDirectoryId = parentDirectoryId,
             )
-        val lockedOriginalParentDirectory =
-            lockedDirectory.parent?.let {
-                queryService.queryLock(it.id)
-            }
 
         lockedParentDirectory?.let {
             lockedDirectory.parent = AggregateAssociation(it.id)
@@ -42,17 +37,7 @@ class DirectoryUpdateService(
             lockedDirectory.name = it
         }
 
-        lockedOriginalParentDirectory?.let {
-            it.children = it.children.filter { child -> child.id != directoryId }
-        }
-
-        lockedParentDirectory?.let {
-            it.children = it.children + AggregateAssociation(directoryId)
-        }
-
-        return commandService.saveAll(
-            listOfNotNull(lockedDirectory, lockedParentDirectory, lockedOriginalParentDirectory),
-        ).firstOrNull() ?: throw AggregateNotFoundException("${Directory::class.simpleName} id: $directoryId")
+        return commandService.save(lockedDirectory)
     }
 
     private fun queryAndLockDirectoryAndParentDirectory(

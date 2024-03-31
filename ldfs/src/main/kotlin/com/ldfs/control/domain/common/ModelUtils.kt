@@ -11,7 +11,6 @@ fun Directory.toEntity(): DirectoryEntity {
         updated = this.updated,
         name = this.name,
         parent = this.parent?.id,
-        children = this.children.map { it.id }.toMutableList(),
     )
 }
 
@@ -22,6 +21,5 @@ fun DirectoryEntity.toAggregate(): Directory {
         updated = this.updated,
         name = this.name,
         parent = this.parent?.let { AggregateAssociation(it) },
-        children = this.children.map { AggregateAssociation(it) },
     )
 }

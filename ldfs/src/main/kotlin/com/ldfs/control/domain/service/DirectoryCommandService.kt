@@ -25,7 +25,6 @@ class DirectoryCommandService(
                     parentDirectoryUuid?.let {
                         AggregateAssociation(it)
                     },
-                children = emptyList(),
             ).toEntity(),
         ).toAggregate()
     }

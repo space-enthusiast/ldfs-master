@@ -11,7 +11,6 @@ class Directory(
     override val updated: OffsetDateTime? = null,
     var name: String,
     var parent: AggregateAssociation<Directory, UUID>?,
-    var children: List<AggregateAssociation<Directory, UUID>>,
 ) : Aggregate<UUID>(
         id = id,
         created = created,
