@@ -1,6 +1,6 @@
 package com.ldfs.main;
 
-import com.ldfs.control.domain.model.entity.Chunk;
+import com.ldfs.control.domain.model.entity.ChunkEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +19,10 @@ public class MainController {
     }
 
     @GetMapping("/getFile")
-    public ResponseEntity<List<Chunk>> getFile(@RequestParam("fileId") Long fileId) {
+    public ResponseEntity<List<ChunkEntity>> getFile(@RequestParam("fileId") Long fileId) {
         // Logic to retrieve file chunks based on fileId
         // Dummy response for demonstration
-        List<Chunk> response = chunkAccessService.getFileChunks(fileId);
+        List<ChunkEntity> response = chunkAccessService.getFileChunks(fileId);
         // Populate response with dummy data
         return ResponseEntity.ok(response);
     }

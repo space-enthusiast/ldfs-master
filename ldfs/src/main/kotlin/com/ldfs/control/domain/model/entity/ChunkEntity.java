@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Chunk {
+public class ChunkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long Id;
@@ -15,6 +15,11 @@ public class Chunk {
 
     public Long sequence;
 
-    public Boolean isReplica;
+    public ChunkState stateChunk;
+
+
+    public void setStateChunk(ChunkState stateChunk) {
+        this.stateChunk = stateChunk;
+    }
 
 }
