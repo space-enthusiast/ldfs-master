@@ -11,5 +11,7 @@ public interface ChunkEntityRepository extends JpaRepository<ChunkEntity, Long> 
 
     List<ChunkEntity> findAllByFileId(Long fileId);
 
+    List<ChunkEntity> findAllByFileIdAndSequence(Long fileId, Long Sequence);
+
     List<ChunkEntity> deleteAllByFileId(Long fileId);
 }

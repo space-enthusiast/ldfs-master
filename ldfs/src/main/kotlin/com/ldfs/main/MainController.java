@@ -1,6 +1,10 @@
 package com.ldfs.main;
 
 import com.ldfs.control.domain.model.entity.ChunkEntity;
+import com.ldfs.control.domain.service.ChunkAccessService;
+import com.ldfs.control.domain.service.ChunkLeaderElectionService;
+import com.ldfs.main.dto.AppendUpdateResponse;
+import com.ldfs.main.dto.LeaderFollowerChunkServers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +17,11 @@ import java.util.List;
 public class MainController {
 
     private final ChunkAccessService chunkAccessService;
+    private final ChunkLeaderElectionService leaderElectionService;
     @Autowired
-    public MainController(ChunkAccessService chunkAccessService) {
+    public MainController(ChunkAccessService chunkAccessService, ChunkLeaderElectionService leaderElectionService) {
         this.chunkAccessService = chunkAccessService;
+        this.leaderElectionService = leaderElectionService;
     }
 
     @GetMapping("/getFile")
@@ -43,13 +49,15 @@ public class MainController {
     }
 
     //TODO
-//    @PostMapping("/appendUpdateFile")
-//    public ResponseEntity<AppendUpdateResponse> appendUpdateFile(@RequestBody Long fileId) {
-//        // Logic to append or update a file
-//        // Dummy response for demonstration
-//        AppendUpdateResponse response = new AppendUpdateResponse();
-//        // Populate response with dummy data
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/appendUpdateFile")
+    public ResponseEntity<AppendUpdateResponse> appendUpdateFile(@RequestParam Long fileId, @RequestParam Long ChunkId) {
+        // Logic to append or update a file
+        List<ChunkEntity> candidates = chunkAccessService.getSpecificChunkOfFile(fileId, ChunkId);
+        LeaderFollowerChunkServers result = leaderElectionService.electLeader(candidates);
+        // Dummy response for demonstration
+        AppendUpdateResponse response = new AppendUpdateResponse(result);
+        // Populate response with dummy data
+        return ResponseEntity.ok(response);
+    }
 
 }

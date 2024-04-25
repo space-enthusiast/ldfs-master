@@ -4,8 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Data;
+import lombok.Setter;
 
 @Entity
+@Data
 public class ChunkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,11 +18,9 @@ public class ChunkEntity {
 
     public Long sequence;
 
+    public Long chunkServerId;
+
+    @Setter
     public ChunkState stateChunk;
-
-
-    public void setStateChunk(ChunkState stateChunk) {
-        this.stateChunk = stateChunk;
-    }
 
 }

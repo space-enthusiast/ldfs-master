@@ -1,4 +1,4 @@
-package com.ldfs.main;
+package com.ldfs.control.domain.service;
 
 import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.model.entity.ChunkState;
@@ -22,6 +22,10 @@ public class ChunkAccessService {
     public List<ChunkEntity> getFileChunks(Long fileId) {
         return chunkEntityRepository.findAllByFileId(fileId);
     }
+    public List<ChunkEntity> getSpecificChunkOfFile(Long fileId, Long chunkId) {
+        return chunkEntityRepository.findAllByFileId(fileId);
+    }
+
 
     public void deleteFile(Long fileId) {
         //TODO
