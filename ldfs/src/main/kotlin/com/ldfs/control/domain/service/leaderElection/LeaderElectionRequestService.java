@@ -1,5 +1,6 @@
 package com.ldfs.control.domain.service.leaderElection;
 
+import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.model.entity.ChunkServerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -69,13 +70,14 @@ public class LeaderElectionRequestService {
         return ongoingElections.get(checksum);
     }
 
-//    completeElection: Completes the leader election process for a given checksum by providing the corresponding response.
+//    completeElection: FORCE-Completes the leader election process for a given checksum by providing the corresponding response.
 //    It removes the checksum from the map if it's still present and the associated CompletableFuture is not already completed.
-    public void completeElection(String checksum, ResponseEntity response) {
+    public CompletableFuture<ResponseEntity> forceCompleteElection(String checksum, ResponseEntity<ChunkEntity> response) {
         CompletableFuture<ResponseEntity> future = ongoingElections.remove(checksum);
         if (future != null && !future.isDone()) {
             future.complete(response);
         }
+        return future;
     }
 
 }
