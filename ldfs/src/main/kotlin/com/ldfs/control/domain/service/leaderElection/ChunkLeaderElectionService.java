@@ -5,15 +5,18 @@ import com.ldfs.control.domain.model.entity.ChunkServerEntity;
 import com.ldfs.control.domain.model.entity.ChunkState;
 import com.ldfs.control.domain.service.ChunkServerAccessService;
 import com.ldfs.main.dto.LeaderFollowerChunkServers;
+import kotlin.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 @Service
@@ -32,6 +35,51 @@ public class ChunkLeaderElectionService {
         this.ongoingElections = ongoingElections;
     }
 
+    // ------------------------------------------------------------
+
+    /*
+        ongoing request leader election request checksum to state or value
+    */
+    private final String successState = "SUCCESS";
+    private final String waitingState = "WAITING";
+    private final ConcurrentHashMap<String, Pair<String, Pair<InetSocketAddress, UUID>>> requestState = new ConcurrentHashMap<>();
+
+//    initiate leader election
+    public void sendAsyncLeaderElectionRequest(List<ChunkServerEntity> broadCastList) {
+        String requestCheckSum = generateChecksum(broadCastList);
+        for (int i = 0; i < broadCastList.size(); i++) {
+            leaderElectionRequestService.httpLeaderElectionService(broadCastList.get(i), broadCastList, requestCheckSum);
+        }
+    }
+
+//    1, sendAsyncLeaderElectionRequest
+//    2, getLeaderElectedChunkServer
+    public Pair<InetSocketAddress, UUID> getLeaderElectedChunkServer() {
+        // 1초간 100 ms주기로 확인하다가
+//        try {
+//            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor()
+//            ScheduledFuture<Integer> future = executor.scheduleAtFixedRate(
+//                () -> 1,
+//                1,
+//                TimeUnit.SECONDS
+//            );
+//
+//        } catch (InterruptedException | ExecutionException e) {
+//            Thread.currentThread().interrupt();
+//            return null;
+//        }
+    }
+
+    // api that the chunk server uses to declare itself the leader
+    public void setChunkServerAsLeader(InetSocketAddress chunkServer, UUID chunkUuid, String requestCheckSum) {
+        String state = requestState.get(requestCheckSum).getFirst();
+        if (state != null && state.equals(waitingState)) {
+            requestState.put(requestCheckSum, new Pair<>(successState, new Pair<>(chunkServer, chunkUuid)));
+        }
+    }
+
+    // ------------------------------------------------------------
+
     public void electLeader(List<ChunkEntity> candidates) {
         List<ChunkServerEntity> broadCastList = candidates.stream().map(chunkServerAccessService::findServerWithSpecificChunk).toList();
         try {
@@ -49,37 +97,9 @@ public class ChunkLeaderElectionService {
         }
     }
 
-    private void leaderElectionHTTPRequest(List<ChunkServerEntity> broadCastList) {
-        // Generate checksum for the request
-        String checksum = generateChecksum(broadCastList);
-
-        // Create a CompletableFuture for the entire process
-        CompletableFuture<ResponseEntity> future = CompletableFuture.supplyAsync(() -> {
-            // Execute httpLeaderElectionService for each chunkServerEntity
-//            this is here for purely a broadCast;
-            broadCastList.forEach(chunkServerEntity -> {
-                leaderElectionRequestService.httpLeaderElectionService(chunkServerEntity, broadCastList, checksum);
-            });
-
-            return null; // CompletableFuture<Void> requires a return value
-        }).thenCompose(result -> {
-            // Schedule a task to remove the checksum after a timeout
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            scheduledExecutorService.schedule(() -> {
-                CompletableFuture<ResponseEntity> electionFuture = ongoingElections.remove(checksum);
-                if (electionFuture != null && !electionFuture.isDone()) {
-                    electionFuture.completeExceptionally(new TimeoutException("Leader election timed out"));
-                }
-            }, TIMEOUT_DURATION, TimeUnit.SECONDS);
-
-            return CompletableFuture.completedFuture(null);
-        });
 
 
-        ongoingElections.put(checksum, future);
-        // Schedule a task to remove the checksum after a timeout
 
-    }
 
     public LeaderFollowerChunkServers mockElectLeader(List<ChunkEntity> candidates) {
         ChunkEntity chosenChunk = candidates.get(temporaryLeaderElectionAlgorithm(candidates));
