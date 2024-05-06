@@ -26,37 +26,20 @@ public class LeaderElectionRequestService {
     }
 
     private final RestTemplate restTemplate;
-    private final ExecutorService executorService;
-    private final Map<String, CompletableFuture<ResponseEntity>> ongoingElections;
-    private final int TIMEOUT_DURATION = 5000;
+
 
     @Autowired
     public LeaderElectionRequestService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.executorService = Executors.newCachedThreadPool();
-        this.ongoingElections = new ConcurrentHashMap<>();
     }
 
 
     @Async
     public void httpLeaderElectionService(ChunkServerEntity chunkServer, List<ChunkServerEntity> broadCastable, String checksum) {
-        try {
+
             String url = "http://" + chunkServer.getIp() + ":" + chunkServer.getPort() + "/";
             RequestBodyDTO requestBody = new RequestBodyDTO(broadCastable, checksum);
             restTemplate.postForObject(url, requestBody, Void.class);
-            CompletableFuture<ResponseEntity> future = new CompletableFuture<>();
-            ongoingElections.put(checksum, future);
-            // Schedule a task to remove the checksum after a timeout
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-            scheduledExecutorService.schedule(() -> {
-                CompletableFuture<ResponseEntity> electionFuture = ongoingElections.remove(checksum);
-                if (electionFuture != null && !electionFuture.isDone()) {
-                    electionFuture.completeExceptionally(new TimeoutException("Leader election timed out"));
-                }
-            }, TIMEOUT_DURATION, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            // Handle exception
-        }
     }
 
 
