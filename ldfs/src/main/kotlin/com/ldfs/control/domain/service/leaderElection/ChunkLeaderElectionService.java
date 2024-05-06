@@ -53,23 +53,30 @@ public class ChunkLeaderElectionService {
         // Generate checksum for the request
         String checksum = generateChecksum(broadCastList);
 
+        // Create a CompletableFuture for the entire process
+        CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+            // Execute httpLeaderElectionService for each chunkServerEntity
+            broadCastList.forEach(chunkServerEntity -> {
+                leaderElectionRequestService.httpLeaderElectionService(chunkServerEntity, broadCastList, checksum);
+            });
+            return null; // CompletableFuture<Void> requires a return value
+        }).thenCompose(result -> {
+            // Schedule a task to remove the checksum after a timeout
+            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+            scheduledExecutorService.schedule(() -> {
+                CompletableFuture<ResponseEntity> electionFuture = ongoingElections.remove(checksum);
+                if (electionFuture != null && !electionFuture.isDone()) {
+                    electionFuture.completeExceptionally(new TimeoutException("Leader election timed out"));
+                }
+            }, TIMEOUT_DURATION, TimeUnit.SECONDS);
 
-        CompletableFuture<ResponseEntity> future = new CompletableFuture<>();
-
-        broadCastList.stream().forEach((chunkServerEntity) -> {
-            leaderElectionRequestService.httpLeaderElectionService(chunkServerEntity, broadCastList, checksum);
+            return CompletableFuture.completedFuture(null);
         });
 
 
         ongoingElections.put(checksum, future);
         // Schedule a task to remove the checksum after a timeout
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.schedule(() -> {
-            CompletableFuture<ResponseEntity> electionFuture = ongoingElections.remove(checksum);
-            if (electionFuture != null && !electionFuture.isDone()) {
-                electionFuture.completeExceptionally(new TimeoutException("Leader election timed out"));
-            }
-        }, TIMEOUT_DURATION, TimeUnit.SECONDS);
+
     }
 
     public LeaderFollowerChunkServers mockElectLeader(List<ChunkEntity> candidates) {
