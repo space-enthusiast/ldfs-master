@@ -2,7 +2,7 @@ package com.ldfs.main;
 
 import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.service.ChunkAccessService;
-import com.ldfs.control.domain.service.ChunkLeaderElectionService;
+import com.ldfs.control.domain.service.leaderElection.ChunkLeaderElectionService;
 import com.ldfs.main.dto.AppendUpdateResponse;
 import com.ldfs.main.dto.LeaderFollowerChunkServers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class MainController {
     public ResponseEntity<AppendUpdateResponse> appendUpdateFile(@RequestParam Long fileId, @RequestParam Long ChunkId) {
         // Logic to append or update a file
         List<ChunkEntity> candidates = chunkAccessService.getSpecificChunkOfFile(fileId, ChunkId);
-        LeaderFollowerChunkServers result = leaderElectionService.electLeader(candidates);
+        LeaderFollowerChunkServers result = leaderElectionService.mockElectLeader(candidates);
         // Dummy response for demonstration
         AppendUpdateResponse response = new AppendUpdateResponse(result);
         // Populate response with dummy data
