@@ -43,24 +43,4 @@ public class LeaderElectionRequestService {
     }
 
 
-//    isResponseReceived: Checks if a response for a particular checksum is ongoing,
-    public boolean isElectionOngoing(String checksum) {
-        return ongoingElections.containsKey(checksum);
-    }
-//    retrieves the CompletableFuture associated with a given checksum,
-//    allowing external components to track the progress or outcome of the leader election.
-    public CompletableFuture<ResponseEntity> getElectionFuture(String checksum) {
-        return ongoingElections.get(checksum);
-    }
-
-//    completeElection: FORCE-Completes the leader election process for a given checksum by providing the corresponding response.
-//    It removes the checksum from the map if it's still present and the associated CompletableFuture is not already completed.
-    public CompletableFuture<ResponseEntity> forceCompleteElection(String checksum, ResponseEntity<ChunkEntity> response) {
-        CompletableFuture<ResponseEntity> future = ongoingElections.remove(checksum);
-        if (future != null && !future.isDone()) {
-            future.complete(response);
-        }
-        return future;
-    }
-
 }
