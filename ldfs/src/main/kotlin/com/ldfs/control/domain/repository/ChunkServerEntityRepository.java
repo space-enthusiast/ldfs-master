@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChunkServerEntityRepository extends JpaRepository<ChunkServerEntity, Long> {
+    ChunkServerEntity findByIp(String IpAddress);
 }

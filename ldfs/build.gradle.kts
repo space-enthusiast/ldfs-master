@@ -30,6 +30,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
     implementation("org.projectlombok:lombok:1.18.32")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

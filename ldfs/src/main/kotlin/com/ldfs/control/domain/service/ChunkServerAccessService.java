@@ -7,6 +7,7 @@ import com.ldfs.control.domain.repository.ChunkServerEntityRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,5 +49,9 @@ public class ChunkServerAccessService {
 
     public ChunkServerEntity findServerWithSpecificChunk(ChunkEntity chunk) {
         return chunkServerEntityRepository.findById(chunk.chunkServerId).orElseThrow();
+    }
+
+    public ChunkServerEntity findServerWithInetSocketAddr(InetSocketAddress addr) {
+        return chunkServerEntityRepository.findByIp(addr.getAddress().getHostAddress());
     }
 }

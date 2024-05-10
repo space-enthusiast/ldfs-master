@@ -1,5 +1,7 @@
 package com.ldfs.control.domain.service.leaderElection;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.model.entity.ChunkServerEntity;
 import com.ldfs.control.domain.model.entity.ChunkState;
@@ -7,7 +9,6 @@ import com.ldfs.control.domain.service.ChunkServerAccessService;
 import com.ldfs.main.dto.LeaderFollowerChunkServers;
 import kotlin.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -15,7 +16,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -23,13 +23,16 @@ import java.util.concurrent.*;
 public class ChunkLeaderElectionService {
     private final ChunkServerAccessService chunkServerAccessService;
     private final LeaderElectionRequestService leaderElectionRequestService;
-    private final ConcurrentHashMap<String, Pair<String, Pair<InetSocketAddress, UUID>>> requestState = new ConcurrentHashMap<>();
+    private final Cache<String, Pair<String, ChunkServerEntity>> activeLeaderElections;
 
     @Autowired
     public ChunkLeaderElectionService(ChunkServerAccessService chunkServerAccessService,
                                       LeaderElectionRequestService leaderElectionRequestService) {
         this.chunkServerAccessService = chunkServerAccessService;
         this.leaderElectionRequestService = leaderElectionRequestService;
+        this.activeLeaderElections = Caffeine.newBuilder()
+                .expireAfterWrite(1, TimeUnit.MINUTES)
+                .build();
     }
 
     // ------------------------------------------------------------
@@ -47,39 +50,25 @@ public class ChunkLeaderElectionService {
         for (int i = 0; i < broadCastList.size(); i++) {
             leaderElectionRequestService.httpLeaderElectionService(broadCastList.get(i), broadCastList, requestCheckSum);
         }
+
+        Pair<String, ChunkServerEntity> leaderElectionDetails = new Pair<>(waitingState, null);
+        activeLeaderElections.put(requestCheckSum, leaderElectionDetails);
+
         return requestCheckSum;
     }
 
-    //    1, sendAsyncLeaderElectionRequest
-//    2, getLeaderElectedChunkServer
-    public Pair<InetSocketAddress, UUID> getLeaderElectedChunkServer(String requestCheckSum) {
-        CompletableFuture<Pair<InetSocketAddress, UUID>> future = new CompletableFuture<>();
+    public Pair<String, ChunkServerEntity> getLeaderElectedChunkServer(String requestCheckSum) {
+        return activeLeaderElections.getIfPresent(requestCheckSum);
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(() -> {
-            if (requestState.containsKey(requestCheckSum) && requestState.get(requestCheckSum).getFirst().equals(successState)) {
-                future.complete(requestState.get(requestCheckSum).getSecond()); // Complete the future when result is found
-            }
-        }, 0, 1, TimeUnit.SECONDS); // Initial delay of 0, execute every 1 second
-
-        // Optionally, you can cancel the future after a certain duration
-        executor.schedule(() -> future.cancel(false), 10, TimeUnit.SECONDS); // Cancel after 10 seconds
-
-        try {
-            return future.get(); // Wait for the future to complete and return the result
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            return null;
-        } finally {
-            executor.shutdown(); // Shut down the executor
-        }
     }
 
     // api that the chunk server uses to declare itself the leader
     public void setChunkServerAsLeader(InetSocketAddress chunkServer, UUID chunkUuid, String requestCheckSum) {
-        String state = requestState.get(requestCheckSum).getFirst();
-        if (state != null && state.equals(waitingState)) {
-            requestState.put(requestCheckSum, new Pair<>(successState, new Pair<>(chunkServer, chunkUuid)));
+        Pair<String, ChunkServerEntity> state = activeLeaderElections.getIfPresent(requestCheckSum);
+        if (state != null && state.getFirst().equals(waitingState)) {
+            ChunkServerEntity chunkServerEntity = chunkServerAccessService.findServerWithInetSocketAddr(chunkServer);
+            Pair<String, ChunkServerEntity> newState = new Pair<>(successState, chunkServerEntity);
+            activeLeaderElections.put(requestCheckSum, newState);
         }
     }
 
