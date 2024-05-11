@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 public class ChunkServerAccessService {
     private final ChunkServerEntityRepository chunkServerEntityRepository;
     private final ChunkEntityRepository chunkEntityRepository;
-    private final Long CHUNK_SIZE = 64L;
+    private final Long CHUNK_SIZE = 65546L;
     private final ChunkServerAccessComputeService chunkServerAccessComputeService;
 
 

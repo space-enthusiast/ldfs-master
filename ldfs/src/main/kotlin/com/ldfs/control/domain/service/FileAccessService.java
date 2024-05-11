@@ -15,7 +15,7 @@ import java.util.UUID;
 public class FileAccessService {
     private final FileEntityRepository fileEntityRepository;
     private final ChunkServerAccessService chunkServerAccessService;
-    private final Long CHUNKSIZE = 64L; //MB
+    private final Long CHUNKSIZE = 65546L; //MB
 
     @Autowired
     public FileAccessService(FileEntityRepository fileEntityRepository, ChunkServerAccessService chunkServerAccessService) {

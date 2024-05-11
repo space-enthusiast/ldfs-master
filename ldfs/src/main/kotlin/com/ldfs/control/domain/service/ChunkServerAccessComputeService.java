@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ChunkServerAccessComputeService {
 
     private final ChunkServerEntityRepository chunkServerEntityRepository;
-    private final Long CHUNK_SIZE = 64L;
+    private final Long CHUNK_SIZE = 65546L;
 
     @Transactional
     public void getMaximumRemainingSpace(List<Triple<UUID,String,String>> chunkServerEntities) {
