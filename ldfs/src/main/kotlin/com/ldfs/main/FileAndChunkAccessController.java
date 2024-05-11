@@ -2,15 +2,19 @@ package com.ldfs.main;
 
 import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.service.ChunkAccessService;
+import com.ldfs.control.domain.service.FileAccessService;
 import com.ldfs.control.domain.service.leaderElection.ChunkLeaderElectionService;
 import com.ldfs.main.dto.AppendUpdateResponse;
+import com.ldfs.main.dto.CreateFileResponse;
 import com.ldfs.main.dto.LeaderFollowerChunkServers;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/files")
@@ -18,10 +22,12 @@ public class MainController {
 
     private final ChunkAccessService chunkAccessService;
     private final ChunkLeaderElectionService leaderElectionService;
+    private final FileAccessService fileAccessService;
     @Autowired
-    public MainController(ChunkAccessService chunkAccessService, ChunkLeaderElectionService leaderElectionService) {
+    public MainController(ChunkAccessService chunkAccessService, ChunkLeaderElectionService leaderElectionService, FileAccessService fileAccessService) {
         this.chunkAccessService = chunkAccessService;
         this.leaderElectionService = leaderElectionService;
+        this.fileAccessService = fileAccessService;
     }
 
     @GetMapping("/getFile")
@@ -33,11 +39,13 @@ public class MainController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @PostMapping("/createFile")
-    public ResponseEntity<String> createFile() {
+    public ResponseEntity<List<CreateFileResponse>> createFile(@RequestParam Long fileSize, @RequestParam String fileName, @RequestParam UUID directoryId) {
         // Logic to create a new file
         // Dummy response for demonstration
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("this feature is not yet ready");
+        fileAccessService.save(fileName, directoryId);
+        return ResponseEntity.ok().body(fileAccessService.chunkify(fileSize));
     }
 
     @DeleteMapping("/deleteFile")
@@ -59,5 +67,7 @@ public class MainController {
         // Populate response with dummy data
         return ResponseEntity.ok(response);
     }
+
+
 
 }
