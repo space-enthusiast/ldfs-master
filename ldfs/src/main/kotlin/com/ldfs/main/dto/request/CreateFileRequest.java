@@ -4,7 +4,7 @@ package com.ldfs.main.dto.request;
 import java.util.UUID;
 
 public class CreateFileRequest {
-    public UUID fileUUID;
+    public UUID fileUuid;
     public Long fileSize;
     public String fileName;
     public UUID directoryId;
@@ -13,12 +13,12 @@ public class CreateFileRequest {
         //default constructor
     }
 
-    public UUID getFileUUID() {
-        return fileUUID;
+    public UUID getFileUuid() {
+        return fileUuid;
     }
 
-    public void setFileUUID(UUID fileUUID) {
-        this.fileUUID = fileUUID;
+    public void setFileUuid(UUID fileUuid) {
+        this.fileUuid = fileUuid;
     }
 
     public String getFileName() {

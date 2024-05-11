@@ -88,4 +88,7 @@ public class ChunkServerAccessService {
         return chunkServerEntityRepository.findAll();
     }
 
+    public UUID getChunkServerUUID(String chunkServerIp, String chunkServerPort) {
+        return chunkServerEntityRepository.findByIpAndPort(chunkServerIp, chunkServerPort).getId();
+    }
 }

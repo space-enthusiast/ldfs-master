@@ -1,4 +1,4 @@
-package com.ldfs.main;
+package com.ldfs.main.controller;
 
 import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.service.ChunkAccessService;
@@ -40,11 +40,11 @@ public class FileAndChunkAccessController {
     }
 
     @Transactional
-    @PostMapping("/createFile")
+    @PostMapping("/fileCreateOperation")
     public ResponseEntity<List<CreateFileResponse>> createFile(@RequestBody CreateFileRequest request) {
         // Logic to create a new file
         // Dummy response for demonstration
-        fileAccessService.save(request.fileName, request.directoryId, request.fileUUID);
+        fileAccessService.save(request.fileName, request.directoryId, request.fileUuid);
         return ResponseEntity.ok().body(fileAccessService.chunkify(request.fileSize));
     }
 
@@ -58,14 +58,20 @@ public class FileAndChunkAccessController {
 
     //TODO
     @PostMapping("/appendUpdateFile")
-    public ResponseEntity<AppendUpdateResponse> appendUpdateFile(@RequestParam UUID fileId, @RequestParam Long ChunkId) {
+    public ResponseEntity<AppendUpdateResponse> appendUpdateFile(@RequestParam UUID fileId, @RequestParam UUID chunkId) {
         // Logic to append or update a file
-        List<ChunkEntity> candidates = chunkAccessService.getSpecificChunkOfFile(fileId, ChunkId);
+        List<ChunkEntity> candidates = chunkAccessService.getSpecificChunkOfFile(fileId, chunkId);
         LeaderFollowerChunkServers result = leaderElectionService.mockElectLeader(candidates);
         // Dummy response for demonstration
         AppendUpdateResponse response = new AppendUpdateResponse(result);
         // Populate response with dummy data
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/fail")
+    public ResponseEntity<String> fail(@RequestParam("fileId") UUID fileId) {
+        fileAccessService.markFail(fileId);
+        return ResponseEntity.noContent().build();
     }
 
 

@@ -1,4 +1,4 @@
-package com.ldfs.main;
+package com.ldfs.main.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataAccessException;

@@ -17,13 +17,13 @@ public class FileEntity {
     public UUID fileUUID;
     public String name;
     public UUID directoryId;
-    public String status;
+    public FileState status;
 
-    public String getStatus() {
+    public FileState getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(FileState status) {
         this.status = status;
     }
 

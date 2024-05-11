@@ -1,4 +1,4 @@
-package com.ldfs.main;
+package com.ldfs.main.controller;
 
 import com.ldfs.control.domain.model.entity.ChunkServerEntity;
 import com.ldfs.control.domain.service.ChunkServerAccessService;
