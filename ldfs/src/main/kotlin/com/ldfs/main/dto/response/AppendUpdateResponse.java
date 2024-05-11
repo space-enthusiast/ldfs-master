@@ -1,6 +1,7 @@
-package com.ldfs.main.dto;
+package com.ldfs.main.dto.response;
 
 import com.ldfs.control.domain.model.entity.ChunkServerEntity;
+import com.ldfs.main.dto.LeaderFollowerChunkServers;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

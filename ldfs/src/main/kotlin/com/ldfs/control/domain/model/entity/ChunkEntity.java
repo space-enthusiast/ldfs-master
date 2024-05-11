@@ -1,26 +1,60 @@
 package com.ldfs.control.domain.model.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.Setter;
+
+import java.util.UUID;
 
 @Entity
-@Data
 public class ChunkEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long Id;
+    public UUID Id;
 
-    public Long fileId;
+    public UUID fileUUID;
 
-    public Long sequence;
+    public Long chunkOrder;
 
-    public Long chunkServerId;
+    public UUID chunkServerId;
 
-    @Setter
     public ChunkState stateChunk;
 
+    public UUID getId() {
+        return Id;
+    }
+
+    public void setId(UUID id) {
+        Id = id;
+    }
+
+    public ChunkState getStateChunk() {
+        return stateChunk;
+    }
+
+    public void setStateChunk(ChunkState stateChunk) {
+        this.stateChunk = stateChunk;
+    }
+
+    public UUID getChunkServerId() {
+        return chunkServerId;
+    }
+
+    public void setChunkServerId(UUID chunkServerId) {
+        this.chunkServerId = chunkServerId;
+    }
+
+    public Long getChunkOrder() {
+        return chunkOrder;
+    }
+
+    public void setChunkOrder(Long sequence) {
+        this.chunkOrder = sequence;
+    }
+
+    public UUID getFileUUID() {
+        return fileUUID;
+    }
+
+    public void setFileUUID(UUID fileId) {
+        this.fileUUID = fileId;
+    }
 }

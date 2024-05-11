@@ -5,13 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface ChunkEntityRepository extends JpaRepository<ChunkEntity, Long> {
+public interface ChunkEntityRepository extends JpaRepository<ChunkEntity, UUID> {
 
-    List<ChunkEntity> findAllByFileId(Long fileId);
+    List<ChunkEntity> findAllByFileUUID(UUID FileUUID);
 
-    List<ChunkEntity> findAllByFileIdAndSequence(Long fileId, Long Sequence);
+    List<ChunkEntity> findAllByFileUUIDAndChunkOrder(UUID FileUUID, Long chunkOrder);
 
-    List<ChunkEntity> deleteAllByFileId(Long fileId);
+    List<ChunkEntity> deleteAllByFileUUID(UUID FileUUID);
 }

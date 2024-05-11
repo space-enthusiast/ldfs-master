@@ -1,9 +1,6 @@
-package com.ldfs.main.dto;
+package com.ldfs.main.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 public class CreateFileResponse {

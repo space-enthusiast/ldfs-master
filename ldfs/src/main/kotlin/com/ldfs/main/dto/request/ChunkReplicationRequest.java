@@ -1,4 +1,4 @@
-package com.ldfs.main.dto;
+package com.ldfs.main.dto.request;
 
 import java.util.UUID;
 
