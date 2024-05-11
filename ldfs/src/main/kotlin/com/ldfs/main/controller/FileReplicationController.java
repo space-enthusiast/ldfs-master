@@ -4,8 +4,10 @@ import com.ldfs.control.domain.model.entity.ChunkEntity;
 import com.ldfs.control.domain.service.ChunkAccessService;
 import com.ldfs.control.domain.service.ChunkServerAccessService;
 import com.ldfs.control.domain.service.FileAccessService;
+import com.ldfs.main.dto.request.ChunkDetailsRequest;
 import com.ldfs.main.dto.request.ChunkReplicationRequest;
 import jakarta.transaction.Transactional;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,21 +33,24 @@ public class FileReplicationController {
         this.fileAccessService = fileAccessService;
     }
 
-    @PostMapping("/fileChunkStore")
-    @Transactional
-    public ResponseEntity<ChunkEntity> fileChunkStore(@RequestBody ChunkReplicationRequest chunkReplicationRequest) {
-        UUID chunkServerId = chunkServerAccessService.getChunkServerUUID(chunkReplicationRequest.chunkServerIp, chunkReplicationRequest.chunkServerPort);
-        ChunkEntity createdChunk =  chunkAccessService.createFileChunk(chunkReplicationRequest.getChunkUUID(),
-                                            chunkReplicationRequest.getFileId(),
-                                            chunkReplicationRequest.getChunkOrder(),
-                                            chunkServerId);
-
-        return ResponseEntity.ok().body(createdChunk);
-    }
-
     @PostMapping("/fileCreationComplete")
     @Transactional
-    public void fileCreationComplete(UUID fileUUID) {
-        fileAccessService.completeSave(fileUUID);
+    public ResponseEntity<List<ChunkEntity>> fileChunkStoreAndComplete(@RequestBody ChunkReplicationRequest chunkReplicationRequest) {
+        UUID fileId = chunkReplicationRequest.getFileId();
+        List<ChunkEntity> savedChunks = new LinkedList<>();
+        for(ChunkDetailsRequest chunkDetailsRequest : chunkReplicationRequest.getFileChunks()) {
+            UUID chunkServerId = chunkServerAccessService.getChunkServerUUID(chunkDetailsRequest.chunkServerIp, chunkDetailsRequest.chunkServerPort);
+            ChunkEntity createdChunk = chunkAccessService.createFileChunk(chunkDetailsRequest.getChunkUUID(),
+                    fileId,
+                    chunkDetailsRequest.getChunkOrder(),
+                    chunkServerId);
+            savedChunks.add(createdChunk);
+        }
+
+        fileAccessService.completeSave(chunkReplicationRequest.fileId);
+
+        return ResponseEntity.ok().body(savedChunks);
     }
+
+
 }

@@ -1,40 +1,14 @@
 package com.ldfs.main.dto.request;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ChunkReplicationRequest {
-    public UUID chunkUUID;
-    public String chunkServerIp;
-    public String chunkServerPort;
     public UUID fileId;
-    public Long chunkOrder;
+    public List<ChunkDetailsRequest> fileChunks;
 
-    public ChunkReplicationRequest(UUID chunkUUID, Long chunkOrder, UUID fileId, String chunkServerPort, String chunkServerIp) {
-        this.chunkUUID = chunkUUID;
-        this.chunkOrder = chunkOrder;
-        this.fileId = fileId;
-        this.chunkServerPort = chunkServerPort;
-        this.chunkServerIp = chunkServerIp;
-    }
-
-    public ChunkReplicationRequest(){
+    public ChunkReplicationRequest() {
         //default constructor
-    }
-
-    public UUID getChunkUUID() {
-        return chunkUUID;
-    }
-
-    public void setChunkUUID(UUID chunkUUID) {
-        this.chunkUUID = chunkUUID;
-    }
-
-    public Long getChunkOrder() {
-        return chunkOrder;
-    }
-
-    public void setChunkOrder(Long chunkOrder) {
-        this.chunkOrder = chunkOrder;
     }
 
     public UUID getFileId() {
@@ -45,19 +19,11 @@ public class ChunkReplicationRequest {
         this.fileId = fileId;
     }
 
-    public String getChunkServerPort() {
-        return chunkServerPort;
+    public List<ChunkDetailsRequest> getFileChunks() {
+        return fileChunks;
     }
 
-    public void setChunkServerPort(String chunkServerPort) {
-        this.chunkServerPort = chunkServerPort;
-    }
-
-    public String getChunkServerIp() {
-        return chunkServerIp;
-    }
-
-    public void setChunkServerIp(String chunkServerIp) {
-        this.chunkServerIp = chunkServerIp;
+    public void setFileChunks(List<ChunkDetailsRequest> fileChunks) {
+        this.fileChunks = fileChunks;
     }
 }
