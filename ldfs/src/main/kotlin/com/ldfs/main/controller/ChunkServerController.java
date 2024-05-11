@@ -3,6 +3,7 @@ package com.ldfs.main.controller;
 import com.ldfs.control.domain.model.entity.ChunkServerEntity;
 import com.ldfs.control.domain.service.ChunkServerAccessService;
 import com.ldfs.main.dto.request.HeartBeatRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ChunkServerController {
     }
 
     //TODO
+    @Transactional
     @PostMapping("/heartBeat")
     public ResponseEntity<ChunkServerEntity> heartBeatUpdateServerStatus(@RequestBody HeartBeatRequest heartBeatRequest) {
         ChunkServerEntity storedEntity = chunkServerAccessService.makeServerDiscoverable(heartBeatRequest.ip,

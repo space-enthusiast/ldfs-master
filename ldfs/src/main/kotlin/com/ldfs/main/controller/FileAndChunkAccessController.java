@@ -1,6 +1,7 @@
 package com.ldfs.main.controller;
 
 import com.ldfs.control.domain.model.entity.ChunkEntity;
+import com.ldfs.control.domain.repository.ChunkServerEntityRepository;
 import com.ldfs.control.domain.service.ChunkAccessService;
 import com.ldfs.control.domain.service.FileAccessService;
 import com.ldfs.control.domain.service.leaderElection.ChunkLeaderElectionService;
@@ -23,11 +24,13 @@ public class FileAndChunkAccessController {
     private final ChunkAccessService chunkAccessService;
     private final ChunkLeaderElectionService leaderElectionService;
     private final FileAccessService fileAccessService;
+    private final ChunkServerEntityRepository chunkServerEntityRepository;
     @Autowired
-    public FileAndChunkAccessController(ChunkAccessService chunkAccessService, ChunkLeaderElectionService leaderElectionService, FileAccessService fileAccessService) {
+    public FileAndChunkAccessController(ChunkAccessService chunkAccessService, ChunkLeaderElectionService leaderElectionService, FileAccessService fileAccessService, ChunkServerEntityRepository chunkServerEntityRepository) {
         this.chunkAccessService = chunkAccessService;
         this.leaderElectionService = leaderElectionService;
         this.fileAccessService = fileAccessService;
+        this.chunkServerEntityRepository = chunkServerEntityRepository;
     }
 
     @GetMapping("/getFile")
@@ -39,7 +42,6 @@ public class FileAndChunkAccessController {
         return ResponseEntity.ok(response);
     }
 
-    @Transactional
     @PostMapping("/fileCreateOperation")
     public ResponseEntity<List<CreateFileResponse>> createFile(@RequestBody CreateFileRequest request) {
         // Logic to create a new file

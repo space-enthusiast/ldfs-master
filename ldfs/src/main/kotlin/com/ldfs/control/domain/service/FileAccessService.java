@@ -4,6 +4,7 @@ import com.ldfs.control.domain.model.entity.FileEntity;
 import com.ldfs.control.domain.model.entity.FileState;
 import com.ldfs.control.domain.repository.FileEntityRepository;
 import com.ldfs.main.dto.response.CreateFileResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

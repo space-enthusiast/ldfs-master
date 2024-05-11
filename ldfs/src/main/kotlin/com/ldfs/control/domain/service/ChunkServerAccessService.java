@@ -7,6 +7,7 @@ import com.ldfs.control.domain.repository.ChunkEntityRepository;
 import com.ldfs.control.domain.repository.ChunkServerEntityRepository;
 import com.ldfs.main.dto.response.CreateFileResponse;
 import jakarta.transaction.Transactional;
+import kotlin.Triple;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -18,11 +19,13 @@ public class ChunkServerAccessService {
     private final ChunkServerEntityRepository chunkServerEntityRepository;
     private final ChunkEntityRepository chunkEntityRepository;
     private final Long CHUNK_SIZE = 64L;
+    private final ChunkServerAccessComputeService chunkServerAccessComputeService;
 
 
-    public ChunkServerAccessService(ChunkServerEntityRepository chunkServerEntityRepository, ChunkEntityRepository chunkEntityRepository) {
+    public ChunkServerAccessService(ChunkServerEntityRepository chunkServerEntityRepository, ChunkEntityRepository chunkEntityRepository, ChunkServerAccessComputeService chunkServerAccessComputeService) {
         this.chunkServerEntityRepository = chunkServerEntityRepository;
         this.chunkEntityRepository = chunkEntityRepository;
+        this.chunkServerAccessComputeService = chunkServerAccessComputeService;
     }
 
     public List<ChunkServerEntity> findServersWithChunkMetadata(UUID fileId, Long sequence) {
@@ -56,23 +59,20 @@ public class ChunkServerAccessService {
         return chunkServerEntityRepository.findByIp(addr.getAddress().getHostAddress());
     }
 
-    @Transactional
     public List<CreateFileResponse> findServersWithStorageSpace(int numberOfChunks) {
-        List<ChunkServerEntity> chunkServerEntities = new LinkedList<>();
+        List<Triple<UUID,String,String>> chunkServerEntities = new LinkedList<>();
         for (int i = 0; i < numberOfChunks; i++) {
-            ChunkServerEntity chunkServerEntity = chunkServerEntityRepository.findByLargestRemainingStorageSize().getFirst();
-            chunkServerEntities.add(chunkServerEntity);
-            chunkServerEntity.setRemainingStorageSize(chunkServerEntity.getRemainingStorageSize() - CHUNK_SIZE);
-            chunkServerEntityRepository.save(chunkServerEntity);
+            chunkServerAccessComputeService.getMaximumRemainingSpace(chunkServerEntities);
         }
         return IntStream.range(0, chunkServerEntities.size()).mapToObj(idx -> new CreateFileResponse((long) idx,
-                chunkServerEntities.get(idx).getIp(),
-                chunkServerEntities.get(idx).getPort()))
+                chunkServerEntities.get(idx).getSecond(),
+                chunkServerEntities.get(idx).getThird()))
                 .toList();
     }
 
+    @Transactional
     public ChunkServerEntity makeServerDiscoverable(String ip, String port, Long remainingStorageSize) {
-        ChunkServerEntity chunkServerEntity = chunkServerEntityRepository.findByIpAndPort(ip,port);
+        ChunkServerEntity chunkServerEntity = chunkServerEntityRepository.findByIpAndPortWithLock(ip,port);
         if(chunkServerEntity == null) {
             chunkServerEntity = new ChunkServerEntity();
             chunkServerEntity.setId(UUID.randomUUID());
