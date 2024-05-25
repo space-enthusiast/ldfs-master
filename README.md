@@ -1,3 +1,37 @@
+# run configuration
+
+this is the run configuration for the ldfs master server
+you should change the master server port by using spring configuration
+
+## spring configuration properties
+
+```
+server.port={MASTER_SERVER_PORT}
+```
+
+example
+```
+server.port=8080
+```
+
+## How to connect to local in memory H2 DB
+- browser base console : http://localhost:8080/h2-console
+- intellij data console jdbc url : `jdbc:h2:tcp://localhost:9092/mem:testdb;OLD_INFORMATION_SCHEMA=TRUE`
+- precaution: database option -> advanced -> expert option -> Introspect using jdbc metadate  
+```
+id: sa
+password:
+```
+- The in memory H2 DB can only run while the server is running because the server provides a tcp server wrapped around the in memory H2 DB you can access it.
+
+## How to connect to swagger 3 documentation
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+---
+
+
 # what is ldfs?
 
 ldfs short for **light distributed file system** is a project that aims to replicate a simple distributed file system for "fun".
