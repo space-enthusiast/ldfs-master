@@ -9,11 +9,13 @@ class ChunkServerEntity(
     @Id
     var id: UUID? = null,
 
-    val ip: String,
+    var ip: String = "",
 
-    val port: String,
+    var port: String = "",
 
-    var remainingStorageSize: Long,
+    var remainingStorageSize: Long = 0L,
 
-    var serverState: ServerState,
-)
+    var serverState: ServerState = ServerState.UNKNOWN,
+) {
+
+}

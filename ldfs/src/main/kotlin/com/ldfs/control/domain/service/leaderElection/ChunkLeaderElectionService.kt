@@ -52,7 +52,7 @@ class ChunkLeaderElectionService (
     fun setChunkServerAsLeader(chunkServer: InetSocketAddress?, chunkUuid: UUID?, requestCheckSum: String?) {
         val state = activeLeaderElections.getIfPresent(requestCheckSum)
         if (state != null && state.first == waitingState) {
-            val chunkServerEntity = chunkServerAccessService.findServerWithInetSocketAddr(chunkServer)
+            val chunkServerEntity = chunkServerAccessService.findServerWithInetSocketAddr(chunkServer!!)
             val newState = Pair(successState, chunkServerEntity)
             activeLeaderElections.put(requestCheckSum, newState)
         }
@@ -62,7 +62,7 @@ class ChunkLeaderElectionService (
     fun electLeader(candidates: List<ChunkEntity>) {
         val broadCastList = candidates.stream().map { chunk: ChunkEntity? ->
             chunkServerAccessService.findServerWithSpecificChunk(
-                chunk
+                chunk!!
             )
         }.toList()
         try {
@@ -79,7 +79,7 @@ class ChunkLeaderElectionService (
         val leader = chunkServerAccessService.findServerWithSpecificChunk(chosenChunk)
         val followers = candidates.stream().map { chunk: ChunkEntity? ->
             chunkServerAccessService.findServerWithSpecificChunk(
-                chunk
+                chunk!!
             )
         }.toList()
         return LeaderFollowerChunkServers(leader, followers)
