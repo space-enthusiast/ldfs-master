@@ -70,17 +70,19 @@ class ChunkServerAccessService(
             .toList()
     }
 
-    fun makeServerDiscoverable(ip: String?, port: String?, remainingStorageSize: Long?): ChunkServerEntity {
-        var chunkServerEntity = chunkServerEntityRepository.findByIpAndPort(ip!!, port!!)
-        if (chunkServerEntity == null) {
-            chunkServerEntity = ChunkServerEntity();
-            chunkServerEntity.id = UUID.randomUUID()
-        }
-        chunkServerEntity.ip = ip
-        chunkServerEntity.port = port
-        chunkServerEntity.remainingStorageSize = remainingStorageSize!!
-        chunkServerEntity.serverState = ServerState.NORMAL
-        return chunkServerEntityRepository.save(chunkServerEntity)
+    fun makeServerDiscoverable(
+        ip: String,
+        port: String,
+        remainingStorageSize: Long,
+    ): ChunkServerEntity {
+        return chunkServerEntityRepository.findByIpAndPort(ip, port)
+            ?: ChunkServerEntity(
+                id = UUID.randomUUID(),
+                ip = ip,
+                port = port,
+                remainingStorageSize = remainingStorageSize,
+                serverState = ServerState.NORMAL
+            )
     }
 
     fun findAll(): List<ChunkServerEntity> {
