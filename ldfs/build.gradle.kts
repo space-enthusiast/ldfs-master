@@ -15,10 +15,6 @@ group = "com"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceSets.getByName("main") {
-        java.srcDir("src/main/java")
-        java.srcDir("src/main/kotlin")
-    }
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
