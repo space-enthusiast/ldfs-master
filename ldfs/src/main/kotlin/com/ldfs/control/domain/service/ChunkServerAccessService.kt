@@ -12,13 +12,14 @@ import java.net.InetSocketAddress
 import java.util.LinkedList
 import java.util.UUID
 import java.util.stream.IntStream
+import kotlin.streams.toList
 
 @Service
 class ChunkServerAccessService(
     private val chunkServerEntityRepository: ChunkServerEntityRepository,
     private val chunkEntityRepository: ChunkEntityRepository,
 ) {
-    private val CHUNK_SIZE = 64L
+    private val chunkSize = 64L
 
     fun findServersWithChunkMetadata(
         fileId: UUID?,
@@ -64,7 +65,7 @@ class ChunkServerAccessService(
                 chunkServerEntityRepository.findByLargestRemainingStorageSize().firstOrNull()
                     ?: throw Exception("no chunk server available")
             chunkServerEntities.add(chunkServerEntity)
-            chunkServerEntity.remainingStorageSize = chunkServerEntity.remainingStorageSize - CHUNK_SIZE
+            chunkServerEntity.remainingStorageSize = chunkServerEntity.remainingStorageSize - chunkSize
             chunkServerEntityRepository.save(chunkServerEntity)
         }
         return IntStream.range(0, chunkServerEntities.size).mapToObj { idx: Int ->

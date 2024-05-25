@@ -26,6 +26,7 @@ class ChunkLeaderElectionService(
             .build()
 
     // ------------------------------------------------------------
+
     /*
         ongoing request leader election request checksum to state or value
      */
@@ -88,29 +89,33 @@ class ChunkLeaderElectionService(
         }
     }
 
-
-    private fun extractLeaderAndLeash(candidates: List<ChunkEntity>, algorithm: LeaderElectionAlgorithm): LeaderFollowerChunkServers {
-        val chunkServersToChunks = candidates.map {
-            chunkServerAccessService.findServerWithSpecificChunk(it) to it
-        }
+    private fun extractLeaderAndLeash(
+        candidates: List<ChunkEntity>,
+        algorithm: LeaderElectionAlgorithm,
+    ): LeaderFollowerChunkServers {
+        val chunkServersToChunks =
+            candidates.map {
+                chunkServerAccessService.findServerWithSpecificChunk(it) to it
+            }
         return when (algorithm) {
             LeaderElectionAlgorithm.TEMPORARY_LEADER_ELECT_ALGORITHM -> {
                 val leaderIdx = (Math.random() * chunkServersToChunks.size).toInt()
                 LeaderFollowerChunkServers(
                     leased = chunkServersToChunks[leaderIdx].first,
-                    nonLeased = chunkServersToChunks.filterIndexed { index, _ ->  index != leaderIdx}.map { it.first }
+                    nonLeased = chunkServersToChunks.filterIndexed { index, _ -> index != leaderIdx }.map { it.first },
                 )
             }
             LeaderElectionAlgorithm.BALANCED_LEADER_ELECT_ALGORITHM -> {
-                val chunkServerBroadCastList = chunkServersToChunks.map {
-                    it.first;
-                }
+                val chunkServerBroadCastList =
+                    chunkServersToChunks.map {
+                        it.first
+                    }
                 leaderElectionChunkStateLock(candidates)
                 val checksum = sendAsyncLeaderElectionRequest(chunkServerBroadCastList)
-                val (a, b) = getLeaderElectedChunkServer(checksum)
+                val (_, b) = getLeaderElectedChunkServer(checksum)
                 LeaderFollowerChunkServers(
                     leased = b!!,
-                    nonLeased = chunkServerBroadCastList.filter{it != b},
+                    nonLeased = chunkServerBroadCastList.filter { it != b },
                 )
             }
         }
@@ -119,8 +124,5 @@ class ChunkLeaderElectionService(
 
 enum class LeaderElectionAlgorithm {
     TEMPORARY_LEADER_ELECT_ALGORITHM,
-    BALANCED_LEADER_ELECT_ALGORITHM
+    BALANCED_LEADER_ELECT_ALGORITHM,
 }
-
-
-

@@ -5,17 +5,16 @@ import com.ldfs.control.domain.model.entity.ChunkState
 import com.ldfs.control.domain.repository.ChunkEntityRepository
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
+import org.springframework.stereotype.Service
 import java.util.UUID
 import java.util.function.Consumer
-import org.springframework.stereotype.Service
 
 @Service
 class ChunkEntityMutationService(
-    private val chunkEntityRepository: ChunkEntityRepository
+    private val chunkEntityRepository: ChunkEntityRepository,
 ) {
-
     @Transactional
-    fun save (chunkEntity: ChunkEntity) : ChunkEntity {
+    fun save(chunkEntity: ChunkEntity): ChunkEntity {
         return chunkEntityRepository.save(chunkEntity)
     }
 
