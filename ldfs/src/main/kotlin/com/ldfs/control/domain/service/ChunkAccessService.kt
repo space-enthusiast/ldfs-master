@@ -4,10 +4,10 @@ import com.ldfs.control.domain.model.entity.ChunkEntity
 import com.ldfs.control.domain.model.entity.ChunkState
 import com.ldfs.control.domain.repository.ChunkEntityRepository
 import jakarta.persistence.EntityNotFoundException
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
 import java.util.UUID
 import java.util.function.Consumer
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
 class ChunkAccessService

@@ -63,27 +63,11 @@ class ChunkLeaderElectionService(
         }
     }
 
-    // ------------------------------------------------------------
-//    fun electLeader(candidates: List<ChunkEntity>) {
-//        val broadCastList = candidates.stream().map { chunk: ChunkEntity? ->
-//            chunkServerAccessService.findServerWithSpecificChunk(
-//                chunk!!
-//            )
-//        }.toList()
-//        try {
-//            leaderElectionChunkStateLock(candidates)
-//            val checksum = sendAsyncLeaderElectionRequest(broadCastList)
-//            getLeaderElectedChunkServer(checksum)
-//        } catch (e: Exception) {
-//        }
-//    }
-
     fun electLeader(candidates: List<ChunkEntity>): LeaderFollowerChunkServers {
-        val chunkServersToChunks =
-            candidates.map {
-                chunkServerAccessService.findServerWithSpecificChunk(it) to it
-            }
-        return chunkServersToChunks.extractLeaderAndLeash(LeaderElectionAlgorithm.TEMPORARY_LEADER_ELECT_ALGORITHM)
+        return extractLeaderAndLeash(
+            candidates = candidates,
+            algorithm = LeaderElectionAlgorithm.TEMPORARY_LEADER_ELECT_ALGORITHM,
+        )
     }
 
     private fun generateChecksum(data: List<ChunkServerEntity>): String? {
@@ -104,15 +88,29 @@ class ChunkLeaderElectionService(
         }
     }
 
-    private fun List<Pair<ChunkServerEntity, ChunkEntity>>.extractLeaderAndLeash(
-        algorithm: LeaderElectionAlgorithm,
-    ): LeaderFollowerChunkServers {
-        val leaderIdx = (Math.random() * this.size).toInt()
+
+    private fun extractLeaderAndLeash(candidates: List<ChunkEntity>, algorithm: LeaderElectionAlgorithm): LeaderFollowerChunkServers {
+        val chunkServersToChunks = candidates.map {
+            chunkServerAccessService.findServerWithSpecificChunk(it) to it
+        }
         return when (algorithm) {
             LeaderElectionAlgorithm.TEMPORARY_LEADER_ELECT_ALGORITHM -> {
+                val leaderIdx = (Math.random() * chunkServersToChunks.size).toInt()
                 LeaderFollowerChunkServers(
-                    leased = this[leaderIdx].first,
-                    nonLeased = this.filterIndexed { index, _ -> index != leaderIdx }.map { it.first },
+                    leased = chunkServersToChunks[leaderIdx].first,
+                    nonLeased = chunkServersToChunks.filterIndexed { index, _ ->  index != leaderIdx}.map { it.first }
+                )
+            }
+            LeaderElectionAlgorithm.BALANCED_LEADER_ELECT_ALGORITHM -> {
+                val chunkServerBroadCastList = chunkServersToChunks.map {
+                    it.first;
+                }
+                leaderElectionChunkStateLock(candidates)
+                val checksum = sendAsyncLeaderElectionRequest(chunkServerBroadCastList)
+                val (a, b) = getLeaderElectedChunkServer(checksum)
+                LeaderFollowerChunkServers(
+                    leased = b!!,
+                    nonLeased = chunkServerBroadCastList.filter{it != b},
                 )
             }
         }
@@ -121,4 +119,8 @@ class ChunkLeaderElectionService(
 
 enum class LeaderElectionAlgorithm {
     TEMPORARY_LEADER_ELECT_ALGORITHM,
+    BALANCED_LEADER_ELECT_ALGORITHM
 }
+
+
+
