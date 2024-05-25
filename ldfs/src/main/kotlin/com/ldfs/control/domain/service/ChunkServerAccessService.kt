@@ -83,13 +83,13 @@ class ChunkServerAccessService(
         remainingStorageSize: Long,
     ): ChunkServerEntity {
         return chunkServerEntityRepository.findByIpAndPort(ip, port)
-            ?: ChunkServerEntity(
+            ?: chunkServerEntityRepository.save(ChunkServerEntity(
                 id = UUID.randomUUID(),
                 ip = ip,
                 port = port,
                 remainingStorageSize = remainingStorageSize,
                 serverState = ServerState.NORMAL,
-            )
+            ))
     }
 
     fun findAll(): List<ChunkServerEntity> {
