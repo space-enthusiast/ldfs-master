@@ -3,6 +3,7 @@ package com.ldfs.main
 import AppendUpdateResponse
 import com.ldfs.control.domain.model.entity.ChunkEntity
 import com.ldfs.control.domain.service.ChunkAccessService
+import com.ldfs.control.domain.service.ChunkEntityMutationService
 import com.ldfs.control.domain.service.FileAccessService
 import com.ldfs.control.domain.service.leaderElection.ChunkLeaderElectionService
 import com.ldfs.main.dto.request.CreateFileRequest
@@ -25,6 +26,7 @@ class FileAndChunkAccessController
     @Autowired
     constructor(
         private val chunkAccessService: ChunkAccessService,
+        private val chunkEntityMutationService: ChunkEntityMutationService,
         private val leaderElectionService: ChunkLeaderElectionService,
         private val fileAccessService: FileAccessService,
     ) {
@@ -56,7 +58,7 @@ class FileAndChunkAccessController
         ): ResponseEntity<String> {
             // Logic to delete a file
             // Dummy response for demonstration
-            chunkAccessService.deleteFile(fileId!!)
+            chunkEntityMutationService.deleteFile(fileId!!)
             return ResponseEntity.ok("File deleted successfully")
         }
 
