@@ -2,16 +2,19 @@ package com.ldfs.control.domain.model.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import lombok.Data
 import java.util.*
 
-
-@Data
 @Entity
-class FileEntity {
+
+class ChunkEntity {
     @Id
+    var Id: UUID? = null
+
     var fileUUID: UUID? = null
-    var name: String? = null
-    var directoryId: UUID? = null
-    var status: String? = null
+
+    var chunkOrder: Long? = null
+
+    var chunkServerId: UUID? = null
+
+    var stateChunk: ChunkState? = null
 }
