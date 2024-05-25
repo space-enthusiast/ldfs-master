@@ -55,7 +55,8 @@ class ChunkServerAccessService(
     fun findServersWithStorageSpace(numberOfChunks: Int): List<CreateFileResponse> {
         val chunkServerEntities: MutableList<ChunkServerEntity> = LinkedList()
         for (i in 0 until numberOfChunks) {
-            val chunkServerEntity = chunkServerEntityRepository.findByLargestRemainingStorageSize().first
+            val chunkServerEntity = chunkServerEntityRepository.findByLargestRemainingStorageSize().firstOrNull()
+                ?: throw Exception("no chunk server available")
             chunkServerEntities.add(chunkServerEntity)
             chunkServerEntity.remainingStorageSize = chunkServerEntity.remainingStorageSize - CHUNK_SIZE
             chunkServerEntityRepository.save(chunkServerEntity)
