@@ -6,16 +6,14 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
 @Service
-class LeaderElectionRequestService (private val restTemplate: RestTemplate) {
-
+class LeaderElectionRequestService(private val restTemplate: RestTemplate) {
     private class RequestBodyDTO(var chunkServerEntities: List<ChunkServerEntity>, var checksum: String?)
-
 
     @Async
     fun httpLeaderElectionService(
         chunkServer: ChunkServerEntity,
         broadCastable: List<ChunkServerEntity>,
-        checksum: String?
+        checksum: String?,
     ) {
         val url = "http://" + chunkServer.ip + ":" + chunkServer.port + "/"
         val requestBody = RequestBodyDTO(broadCastable, checksum)

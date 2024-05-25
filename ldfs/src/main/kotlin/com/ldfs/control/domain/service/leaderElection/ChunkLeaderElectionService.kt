@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service
 import java.net.InetSocketAddress
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.*
+import java.util.Base64
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Service
-class ChunkLeaderElectionService (
+class ChunkLeaderElectionService(
     private val chunkServerAccessService: ChunkServerAccessService,
-    private val leaderElectionRequestService: LeaderElectionRequestService
+    private val leaderElectionRequestService: LeaderElectionRequestService,
 ) {
     private val activeLeaderElections: Cache<String?, Pair<String, ChunkServerEntity?>> =
         Caffeine.newBuilder()
@@ -27,7 +28,7 @@ class ChunkLeaderElectionService (
     // ------------------------------------------------------------
     /*
         ongoing request leader election request checksum to state or value
-    */
+     */
     private val successState = "SUCCESS"
     private val waitingState = "WAITING"
 
@@ -49,7 +50,11 @@ class ChunkLeaderElectionService (
     }
 
     // api that the chunk server uses to declare itself the leader
-    fun setChunkServerAsLeader(chunkServer: InetSocketAddress?, chunkUuid: UUID?, requestCheckSum: String?) {
+    fun setChunkServerAsLeader(
+        chunkServer: InetSocketAddress?,
+        chunkUuid: UUID?,
+        requestCheckSum: String?,
+    ) {
         val state = activeLeaderElections.getIfPresent(requestCheckSum)
         if (state != null && state.first == waitingState) {
             val chunkServerEntity = chunkServerAccessService.findServerWithInetSocketAddr(chunkServer!!)
@@ -74,9 +79,10 @@ class ChunkLeaderElectionService (
 //    }
 
     fun electLeader(candidates: List<ChunkEntity>): LeaderFollowerChunkServers {
-        val chunkServersToChunks = candidates.map {
-            chunkServerAccessService.findServerWithSpecificChunk(it) to it
-        }
+        val chunkServersToChunks =
+            candidates.map {
+                chunkServerAccessService.findServerWithSpecificChunk(it) to it
+            }
         return chunkServersToChunks.extractLeaderAndLeash(LeaderElectionAlgorithm.TEMPORARY_LEADER_ELECT_ALGORITHM)
     }
 
@@ -98,13 +104,15 @@ class ChunkLeaderElectionService (
         }
     }
 
-    private fun List<Pair<ChunkServerEntity, ChunkEntity>>.extractLeaderAndLeash(algorithm: LeaderElectionAlgorithm): LeaderFollowerChunkServers {
+    private fun List<Pair<ChunkServerEntity, ChunkEntity>>.extractLeaderAndLeash(
+        algorithm: LeaderElectionAlgorithm,
+    ): LeaderFollowerChunkServers {
         val leaderIdx = (Math.random() * this.size).toInt()
         return when (algorithm) {
             LeaderElectionAlgorithm.TEMPORARY_LEADER_ELECT_ALGORITHM -> {
                 LeaderFollowerChunkServers(
                     leased = this[leaderIdx].first,
-                    nonLeased = this.filterIndexed { index, _ ->  index != leaderIdx}.map { it.first }
+                    nonLeased = this.filterIndexed { index, _ -> index != leaderIdx }.map { it.first },
                 )
             }
         }

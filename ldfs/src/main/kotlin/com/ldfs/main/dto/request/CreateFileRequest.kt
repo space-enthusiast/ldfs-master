@@ -1,9 +1,8 @@
 package com.ldfs.main.dto.request
 
-import java.util.*
+import java.util.UUID
 
-
-class CreateFileRequest (
+class CreateFileRequest(
     var fileUUID: UUID? = null,
     var fileSize: Long? = null,
     var fileName: String? = null,

@@ -10,8 +10,14 @@ import java.util.UUID
 interface ChunkServerEntityRepository : JpaRepository<ChunkServerEntity, UUID> {
     fun findByIp(ipAddress: String): ChunkServerEntity?
 
-    fun findByIpAndPort(ipAddress: String, port: String): ChunkServerEntity?
+    fun findByIpAndPort(
+        ipAddress: String,
+        port: String,
+    ): ChunkServerEntity?
 
-    @Query(value = "SELECT i FROM ChunkServerEntity i WHERE i.remainingStorageSize = (SELECT MAX(i.remainingStorageSize) FROM ChunkServerEntity i)")
+    @Query(
+        "SELECT i FROM ChunkServerEntity i " +
+            "WHERE i.remainingStorageSize = (SELECT MAX(i.remainingStorageSize) FROM ChunkServerEntity i)",
+    )
     fun findByLargestRemainingStorageSize(): List<ChunkServerEntity>
 }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 class FileReplicationController {
     @PostMapping("/chunkReplicationInit")
     @Transactional
-    fun chunkReplicationInit(@RequestBody chunkReplicationRequest: ChunkReplicationRequest?) {
+    fun chunkReplicationInit(
+        @RequestBody chunkReplicationRequest: ChunkReplicationRequest?,
+    ) {
     }
 }

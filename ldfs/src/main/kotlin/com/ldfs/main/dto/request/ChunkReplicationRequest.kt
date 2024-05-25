@@ -1,6 +1,6 @@
 package com.ldfs.main.dto.request
 
-import java.util.*
+import java.util.UUID
 
 class ChunkReplicationRequest(
     var chunkUUID: UUID?,
