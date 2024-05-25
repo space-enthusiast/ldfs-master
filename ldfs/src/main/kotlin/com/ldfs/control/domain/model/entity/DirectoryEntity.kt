@@ -8,9 +8,9 @@ import java.util.UUID
 @Entity(name = "directory")
 class DirectoryEntity(
     @Id
-    var id: UUID?,
-    val created: OffsetDateTime?,
+    var id: UUID,
+    val created: OffsetDateTime,
     val updated: OffsetDateTime?,
-    var name: String?,
+    var name: String,
     var parent: UUID?,
 )
