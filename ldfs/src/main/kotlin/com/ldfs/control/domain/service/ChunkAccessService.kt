@@ -1,11 +1,8 @@
 package com.ldfs.control.domain.service
 
 import com.ldfs.control.domain.model.entity.ChunkEntity
-import com.ldfs.control.domain.model.entity.ChunkState
 import com.ldfs.control.domain.repository.ChunkEntityRepository
-import jakarta.persistence.EntityNotFoundException
 import java.util.UUID
-import java.util.function.Consumer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -22,18 +19,5 @@ class ChunkAccessService
             chunkId: Long?,
         ): List<ChunkEntity> {
             return chunkEntityRepository.findAllByFileUUID(fileId!!)
-        }
-
-        fun deleteFile(fileId: UUID) {
-            // TODO
-            val deleteList = chunkEntityRepository.findAllByFileUUID(fileId)
-            if (deleteList.isEmpty()) {
-                throw EntityNotFoundException("File with ID" + fileId + "is not found within DB")
-            }
-            deleteList.forEach(
-                Consumer { chunkEntity: ChunkEntity ->
-                    chunkEntity.stateChunk = ChunkState.DELETING
-                },
-            )
         }
     }
