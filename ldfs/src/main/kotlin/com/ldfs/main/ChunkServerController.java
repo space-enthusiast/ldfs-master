@@ -24,7 +24,6 @@ public class ChunkServerController {
         return ResponseEntity.ok().body(chunkServerAccessService.findAll());
     }
 
-    //TODO
     @PostMapping("/heartBeat")
     public ResponseEntity<ChunkServerEntity> heartBeatUpdateServerStatus(@RequestBody HeartBeatRequest heartBeatRequest) {
         ChunkServerEntity storedEntity = chunkServerAccessService.makeServerDiscoverable(heartBeatRequest.ip,
