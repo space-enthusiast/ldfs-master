@@ -1,4 +1,5 @@
 package com.ldfs.control.domain.service.leaderElection
 
-class ChunkLeaderElectionResponse {
-}
+data class ChunkLeaderElectionResponse(
+    val id: String,
+)

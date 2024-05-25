@@ -5,15 +5,15 @@ import jakarta.persistence.Id
 import java.util.*
 
 @Entity
-class ChunkServerEntity {
+class ChunkServerEntity(
     @Id
-    private val id: UUID? = null
+    var id: UUID? = null,
 
-    var ip: String? = null
+    val ip: String,
 
-    var port: String? = null
+    val port: String,
 
-    var remainingStorageSize: Long? = null
+    var remainingStorageSize: Long,
 
-    var serverState: ServerState? = null
-}
+    var serverState: ServerState,
+)

@@ -7,9 +7,9 @@ import java.util.*
 
 @Repository
 interface ChunkEntityRepository: JpaRepository<ChunkEntity, UUID> {
-    fun findAllByFileUUID(FileUUID: UUID?): List<ChunkEntity?>?
+    fun findAllByFileUUID(FileUUID: UUID): List<ChunkEntity>
 
-    fun findAllByFileUUIDAndChunkOrder(FileUUID: UUID?, chunkOrder: Long?): List<ChunkEntity?>?
+    fun findAllByFileUUIDAndChunkOrder(FileUUID: UUID, chunkOrder: Long): List<ChunkEntity>
 
-    fun deleteAllByFileUUID(FileUUID: UUID?): List<ChunkEntity?>?
+    fun deleteAllByFileUUID(FileUUID: UUID): List<ChunkEntity>
 }

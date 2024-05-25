@@ -4,13 +4,14 @@ import com.ldfs.control.domain.model.entity.ChunkServerEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import java.util.UUID
 
 @Repository
-interface ChunkServerEntityRepository : JpaRepository<ChunkServerEntity, Long> {
-    fun findByIp(IpAddress: String?): ChunkServerEntity?
+interface ChunkServerEntityRepository : JpaRepository<ChunkServerEntity, UUID> {
+    fun findByIp(IpAddress: String): ChunkServerEntity?
 
-    fun findByIpAndPort(IpAddress: String?, port: String?): ChunkServerEntity?
+    fun findByIpAndPort(IpAddress: String, port: String): ChunkServerEntity?
 
     @Query(value = "SELECT i FROM ChunkServerEntity i WHERE i.remainingStorageSize = (SELECT MAX(i.remainingStorageSize) FROM ChunkServerEntity i)")
-    fun findByLargestRemainingStorageSize(): List<ChunkServerEntity?>?
+    fun findByLargestRemainingStorageSize(): List<ChunkServerEntity>
 }
