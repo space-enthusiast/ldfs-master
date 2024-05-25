@@ -1,6 +1,8 @@
+package com.ldfs.presentation
+
 import com.ldfs.control.domain.model.entity.ChunkServerEntity
 import com.ldfs.control.domain.service.ChunkServerAccessService
-import com.ldfs.main.dto.request.HeartBeatRequest
+import com.ldfs.presentation.dto.request.HeartBeatRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping

@@ -1,4 +1,4 @@
-package com.ldfs.main.dto.response
+package com.ldfs.presentation.dto.response
 
 data class CreateFileResponse(
     var order: Long? = null,

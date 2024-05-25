@@ -1,4 +1,4 @@
-package com.ldfs.main.dto
+package com.ldfs.presentation.dto
 
 import com.ldfs.control.domain.model.entity.ChunkServerEntity
 

@@ -5,14 +5,13 @@ import com.ldfs.control.domain.model.entity.ChunkServerEntity
 import com.ldfs.control.domain.model.entity.ServerState
 import com.ldfs.control.domain.repository.ChunkEntityRepository
 import com.ldfs.control.domain.repository.ChunkServerEntityRepository
-import com.ldfs.main.dto.response.CreateFileResponse
+import com.ldfs.presentation.dto.response.CreateFileResponse
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.net.InetSocketAddress
 import java.util.LinkedList
 import java.util.UUID
 import java.util.stream.IntStream
-import kotlin.streams.toList
 
 @Service
 class ChunkServerAccessService(

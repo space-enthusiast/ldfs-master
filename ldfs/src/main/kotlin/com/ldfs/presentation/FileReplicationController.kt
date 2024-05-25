@@ -1,6 +1,6 @@
-package com.ldfs.main
+package com.ldfs.presentation
 
-import com.ldfs.main.dto.request.ChunkReplicationRequest
+import com.ldfs.presentation.dto.request.ChunkReplicationRequest
 import jakarta.transaction.Transactional
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

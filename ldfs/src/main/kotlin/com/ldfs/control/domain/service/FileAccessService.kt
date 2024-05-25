@@ -2,7 +2,7 @@ package com.ldfs.control.domain.service
 
 import com.ldfs.control.domain.model.entity.FileEntity
 import com.ldfs.control.domain.repository.FileEntityRepository
-import com.ldfs.main.dto.response.CreateFileResponse
+import com.ldfs.presentation.dto.response.CreateFileResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.UUID

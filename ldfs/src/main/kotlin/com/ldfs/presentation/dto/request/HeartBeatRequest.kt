@@ -1,4 +1,4 @@
-package com.ldfs.main.dto.request
+package com.ldfs.presentation.dto.request
 
 class HeartBeatRequest(
     var ip: String? = null,

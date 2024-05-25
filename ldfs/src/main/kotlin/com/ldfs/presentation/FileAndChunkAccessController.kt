@@ -1,4 +1,4 @@
-package com.ldfs.main
+package com.ldfs.presentation
 
 import AppendUpdateResponse
 import com.ldfs.control.domain.model.entity.ChunkEntity
@@ -6,8 +6,8 @@ import com.ldfs.control.domain.service.ChunkAccessService
 import com.ldfs.control.domain.service.ChunkEntityMutationService
 import com.ldfs.control.domain.service.FileAccessService
 import com.ldfs.control.domain.service.leaderElection.ChunkLeaderElectionService
-import com.ldfs.main.dto.request.CreateFileRequest
-import com.ldfs.main.dto.response.CreateFileResponse
+import com.ldfs.presentation.dto.request.CreateFileRequest
+import com.ldfs.presentation.dto.response.CreateFileResponse
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

@@ -6,7 +6,7 @@ import com.ldfs.control.domain.model.entity.ChunkEntity
 import com.ldfs.control.domain.model.entity.ChunkServerEntity
 import com.ldfs.control.domain.model.entity.ChunkState
 import com.ldfs.control.domain.service.ChunkServerAccessService
-import com.ldfs.main.dto.LeaderFollowerChunkServers
+import com.ldfs.presentation.dto.LeaderFollowerChunkServers
 import org.springframework.stereotype.Service
 import java.net.InetSocketAddress
 import java.security.MessageDigest
